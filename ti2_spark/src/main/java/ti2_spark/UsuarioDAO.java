@@ -4,56 +4,76 @@ import java.sql.*;
 
 public class UsuarioDAO extends DAO {
 
-    // Método para mostrar os usuários
+    public UsuarioDAO() {
+        super();
+    }
+
     public Usuario[] listarUsuarios() {
         Usuario[] usuarios = null;
         try {
             Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT * FROM usuario");
+
             if (rs.next()) {
                 rs.last();
                 usuarios = new Usuario[rs.getRow()];
                 rs.beforeFirst();
-                for (int i = 0; rs.next(); i++) usuarios[i] = new Usuario(rs.getInt("codigo"), rs.getString("login"), rs.getString("senha"), rs.getString("sexo").charAt(0));
+
+                int i = 0;
+                while (rs.next()) {
+                    usuarios[i++] = new Usuario(
+                        rs.getInt("codigo"),
+                        rs.getString("login"),
+                        rs.getString("senha"),
+                        rs.getString("sexo").charAt(0)
+                    );
+                }
             }
             st.close();
-        } catch (Exception e) { System.err.println(e.getMessage()); }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
         return usuarios;
     }
 
-    // Método para inserir usuário
-    public boolean inserirUsuario(Usuario usuario) {
+    public boolean inserirUsuario(Usuario u) {
         boolean status = false;
         try {
             Statement st = conexao.createStatement();
-            st.executeUpdate("INSERT INTO usuario (codigo, login, senha, sexo) VALUES (" + usuario.getCodigo() + ", '" + usuario.getLogin() + "', '" + usuario.getSenha() + "', '" + usuario.getSexo() + "')");
+            st.executeUpdate("INSERT INTO usuario (codigo, login, senha, sexo) "
+                    + "VALUES (" + u.getCodigo() + ", '" + u.getLogin() + "', '" + u.getSenha() + "', '" + u.getSexo() + "');");
             st.close();
             status = true;
-        } catch (SQLException u) { throw new RuntimeException(u); }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
         return status;
     }
 
-    // Método para atualizar usuário
-    public boolean atualizarUsuario(Usuario usuario) {
+    public boolean atualizarUsuario(Usuario u) {
         boolean status = false;
         try {
             Statement st = conexao.createStatement();
-            st.executeUpdate("UPDATE usuario SET login = '" + usuario.getLogin() + "', senha = '" + usuario.getSenha() + "', sexo = '" + usuario.getSexo() + "' WHERE codigo = " + usuario.getCodigo());
+            st.executeUpdate("UPDATE usuario SET login = '" + u.getLogin() + "', senha = '" + u.getSenha() +
+                    "', sexo = '" + u.getSexo() + "' WHERE codigo = " + u.getCodigo() + ";");
             st.close();
             status = true;
-        } catch (SQLException u) { throw new RuntimeException(u); }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
         return status;
     }
 
-    // Método para excluir um usuário
     public boolean excluirUsuario(int codigo) {
         boolean status = false;
         try {
             Statement st = conexao.createStatement();
-            st.executeUpdate("DELETE FROM usuario WHERE codigo = " + codigo);
+            st.executeUpdate("DELETE FROM usuario WHERE codigo = " + codigo + ";");
             st.close();
             status = true;
-        } catch (SQLException u) { throw new RuntimeException(u); }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
         return status;
     }
 }

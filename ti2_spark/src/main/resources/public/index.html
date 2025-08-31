@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Usuários</title>
+</head>
+<body>
+  <h1>Gerenciamento de Usuários</h1>
+
+  <form id="formNovo">
+    <input type="text" id="login" placeholder="Login" required>
+    <input type="password" id="senha" placeholder="Senha" required>
+    <input type="text" id="sexo" placeholder="Sexo (M/F)" required maxlength="1">
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <h2>Lista de Usuários</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Login</th>
+        <th>Sexo</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaUsuarios"></tbody>
+  </table>
+
+  <script>
+    async function carregarUsuarios() {
+      const res = await fetch("/usuarios");
+      const usuarios = await res.json();
+      const tbody = document.getElementById("tabelaUsuarios");
+      tbody.innerHTML = "";
+      usuarios.forEach(u => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${u.codigo}</td>
+          <td>${u.login}</td>
+          <td>${u.sexo}</td>
+          <td>
+            <button onclick="removerUsuario(${u.codigo})">Excluir</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("formNovo").addEventListener("submit", async e => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("login", document.getElementById("login").value);
+      formData.append("senha", document.getElementById("senha").value);
+      formData.append("sexo", document.getElementById("sexo").value);
+
+      await fetch("/usuarios", { method: "POST", body: formData });
+      carregarUsuarios();
+      e.target.reset();
+    });
+
+    async function removerUsuario(id) {
+      await fetch(`/usuarios/${id}`, { method: "DELETE" });
+      carregarUsuarios();
+    }
+
+    carregarUsuarios();
+  </script>
+</body>
+</html>
