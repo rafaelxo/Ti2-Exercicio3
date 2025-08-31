@@ -3,67 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <title>CRUD Usuários</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2 { margin-top: 30px; }
+    form { margin-bottom: 20px; }
+    input, button { margin: 5px; padding: 6px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
 </head>
 <body>
-  <h1>Gerenciamento de Usuários</h1>
+  <h1>CRUD Usuários</h1>
 
-  <form id="formNovo">
-    <input type="text" id="login" placeholder="Login" required>
-    <input type="password" id="senha" placeholder="Senha" required>
-    <input type="text" id="sexo" placeholder="Sexo (M/F)" required maxlength="1">
-    <button type="submit">Adicionar</button>
-  </form>
-
-  <h2>Lista de Usuários</h2>
-  <table border="1">
+  <!-- Listagem -->
+  <h2>Usuários cadastrados</h2>
+  <button onclick="listarUsuarios()">Atualizar Lista</button>
+  <table id="tabelaUsuarios">
     <thead>
       <tr>
         <th>Código</th>
         <th>Login</th>
+        <th>Senha (MD5)</th>
         <th>Sexo</th>
-        <th>Ações</th>
       </tr>
     </thead>
-    <tbody id="tabelaUsuarios"></tbody>
+    <tbody></tbody>
   </table>
 
+  <!-- Inserir -->
+  <h2>Adicionar Usuário</h2>
+  <form onsubmit="inserirUsuario(event)">
+    <input type="text" id="novoLogin" placeholder="Login" required>
+    <input type="password" id="novaSenha" placeholder="Senha" required>
+    <input type="text" id="novoSexo" placeholder="Sexo (M/F)" maxlength="1" required>
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <!-- Atualizar -->
+  <h2>Atualizar Usuário</h2>
+  <form onsubmit="atualizarUsuario(event)">
+    <input type="number" id="atualizarId" placeholder="Código" required>
+    <input type="text" id="atualizarLogin" placeholder="Novo Login" required>
+    <input type="password" id="atualizarSenha" placeholder="Nova Senha" required>
+    <input type="text" id="atualizarSexo" placeholder="Novo Sexo (M/F)" maxlength="1" required>
+    <button type="submit">Atualizar</button>
+  </form>
+
+  <!-- Excluir -->
+  <h2>Excluir Usuário</h2>
+  <form onsubmit="excluirUsuario(event)">
+    <input type="number" id="excluirId" placeholder="Código" required>
+    <button type="submit">Excluir</button>
+  </form>
+
   <script>
-    async function carregarUsuarios() {
-      const res = await fetch("/usuarios");
+    const API = "http://localhost:4567/usuarios";
+
+    async function listarUsuarios() {
+      const res = await fetch(API);
       const usuarios = await res.json();
-      const tbody = document.getElementById("tabelaUsuarios");
+      const tbody = document.querySelector("#tabelaUsuarios tbody");
       tbody.innerHTML = "";
       usuarios.forEach(u => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${u.codigo}</td>
           <td>${u.login}</td>
+          <td>${u.senha}</td>
           <td>${u.sexo}</td>
-          <td>
-            <button onclick="removerUsuario(${u.codigo})">Excluir</button>
-          </td>`;
+        `;
         tbody.appendChild(tr);
       });
     }
 
-    document.getElementById("formNovo").addEventListener("submit", async e => {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append("login", document.getElementById("login").value);
-      formData.append("senha", document.getElementById("senha").value);
-      formData.append("sexo", document.getElementById("sexo").value);
+    async function inserirUsuario(event) {
+      event.preventDefault();
+      const login = document.getElementById("novoLogin").value;
+      const senha = document.getElementById("novaSenha").value;
+      const sexo = document.getElementById("novoSexo").value;
 
-      await fetch("/usuarios", { method: "POST", body: formData });
-      carregarUsuarios();
-      e.target.reset();
-    });
-
-    async function removerUsuario(id) {
-      await fetch(`/usuarios/${id}`, { method: "DELETE" });
-      carregarUsuarios();
+      await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `login=${login}&senha=${senha}&sexo=${sexo}`
+      });
+      listarUsuarios();
+      event.target.reset();
     }
 
-    carregarUsuarios();
+    async function atualizarUsuario(event) {
+      event.preventDefault();
+      const id = document.getElementById("atualizarId").value;
+      const login = document.getElementById("atualizarLogin").value;
+      const senha = document.getElementById("atualizarSenha").value;
+      const sexo = document.getElementById("atualizarSexo").value;
+
+      await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `login=${login}&senha=${senha}&sexo=${sexo}`
+      });
+      listarUsuarios();
+      event.target.reset();
+    }
+
+    async function excluirUsuario(event) {
+      event.preventDefault();
+      const id = document.getElementById("excluirId").value;
+
+      await fetch(`${API}/${id}`, { method: "DELETE" });
+      listarUsuarios();
+      event.target.reset();
+    }
+
+    // Carregar lista ao abrir
+    listarUsuarios();
   </script>
 </body>
 </html>
