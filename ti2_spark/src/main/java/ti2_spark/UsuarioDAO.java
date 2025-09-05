@@ -13,7 +13,6 @@ public class UsuarioDAO extends DAO {
         try {
             Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT * FROM usuario");
-
             if (rs.next()) {
                 rs.last();
                 usuarios = new Usuario[rs.getRow()];

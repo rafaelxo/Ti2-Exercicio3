@@ -7,7 +7,7 @@ public class Principal {
 
     public static void main(String[] args) {
         port(6789);
-        staticFiles.location("/public"); // pasta resources/public para arquivos estáticos (HTML, CSS, JS)
+        staticFiles.location("/public");
 
         // Conexão com banco
         if (!usuarioDAO.conectar()) {
