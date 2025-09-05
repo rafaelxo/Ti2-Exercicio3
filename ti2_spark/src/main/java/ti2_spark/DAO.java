@@ -18,8 +18,8 @@ public class DAO {
             String mydatabase = "teste";
             int porta = 5432;
             String url = "jdbc:postgresql://" + serverName + ":" + porta + "/" + mydatabase;
-            String username = "rafaelxo";
-            String password = "Rafael123";
+            String username = "postgres";
+            String password = "rafael123";
 
             Class.forName(driverName);
             conexao = DriverManager.getConnection(url, username, password);
