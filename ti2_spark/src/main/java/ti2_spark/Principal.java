@@ -30,9 +30,7 @@ public class Principal {
                 String[] kv = pair.split("=", 2);
                 if (kv.length == 2) {
                     String k = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
-                    if (k.equals(name)) {
-                        return URLDecoder.decode(kv[1], StandardCharsets.UTF_8);
-                    }
+                    if (k.equals(name)) { return URLDecoder.decode(kv[1], StandardCharsets.UTF_8); }
                 }
             }
             return null;

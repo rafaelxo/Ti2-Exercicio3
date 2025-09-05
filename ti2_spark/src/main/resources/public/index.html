@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>CRUD Usuários</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { margin-top: 30px; }
-    form { margin-bottom: 20px; }
-    input, button { margin: 5px; padding: 6px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-  </style>
+  <link rel="stylesheet" href="index.css">
+  <script src="index.js"></script>
 </head>
 <body>
   <h1>CRUD Usuários</h1>
 
+  <!--  Read  -->
   <h2>Usuários cadastrados</h2>
   <button onclick="listarUsuarios()">Atualizar Lista</button>
   <table id="tabelaUsuarios">
@@ -29,6 +24,7 @@
     <tbody></tbody>
   </table>
 
+  <!--  Create  -->
   <h2>Adicionar Usuário</h2>
   <form onsubmit="inserirUsuario(event)">
     <input type="text" id="novoLogin" placeholder="Login" required>
@@ -37,6 +33,7 @@
     <button type="submit">Adicionar</button>
   </form>
 
+  <!--  Update  -->
   <h2>Atualizar Usuário</h2>
   <form onsubmit="atualizarUsuario(event)">
     <input type="number" id="atualizarId" placeholder="Código" required>
@@ -46,73 +43,12 @@
     <button type="submit">Atualizar</button>
   </form>
 
+  <!--  Delete  -->
   <h2>Excluir Usuário</h2>
   <form onsubmit="excluirUsuario(event)">
     <input type="number" id="excluirId" placeholder="Código" required>
     <button type="submit">Excluir</button>
   </form>
 
-  <script>
-    const API = "/usuarios";
-    
-    async function listarUsuarios() {
-      const res = await fetch(API);
-      const usuarios = await res.json();
-      const tbody = document.querySelector("#tabelaUsuarios tbody");
-      tbody.innerHTML = "";
-      usuarios.forEach(u => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${u.codigo}</td>
-          <td>${u.login}</td>
-          <td>${u.senha}</td>
-          <td>${u.sexo}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function inserirUsuario(event) {
-      event.preventDefault();
-      const login = document.getElementById("novoLogin").value;
-      const senha = document.getElementById("novaSenha").value;
-      const sexo = document.getElementById("novoSexo").value;
-
-      await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `login=${encodeURIComponent(login)}&senha=${encodeURIComponent(senha)}&sexo=${encodeURIComponent(sexo)}`
-      });
-      listarUsuarios();
-      event.target.reset();
-    }
-
-    async function atualizarUsuario(event) {
-      event.preventDefault();
-      const id = document.getElementById("atualizarId").value;
-      const login = document.getElementById("atualizarLogin").value;
-      const senha = document.getElementById("atualizarSenha").value;
-      const sexo = document.getElementById("atualizarSexo").value;
-
-      await fetch(`${API}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `login=${encodeURIComponent(login)}&senha=${encodeURIComponent(senha)}&sexo=${encodeURIComponent(sexo)}`
-      });
-      listarUsuarios();
-      event.target.reset();
-    }
-
-    async function excluirUsuario(event) {
-      event.preventDefault();
-      const id = document.getElementById("excluirId").value;
-
-      await fetch(`${API}/${id}`, { method: "DELETE" });
-      listarUsuarios();
-      event.target.reset();
-    }
-
-    listarUsuarios();
-  </script>
 </body>
 </html>

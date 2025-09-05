@@ -6,9 +6,7 @@ import java.util.List;
 
 public class UsuarioDAO extends DAO {
 
-    public UsuarioDAO() {
-        super();
-    }
+    public UsuarioDAO() { super(); }
 
     public Usuario[] listarUsuarios() {
         List<Usuario> list = new ArrayList<>();
@@ -24,9 +22,7 @@ public class UsuarioDAO extends DAO {
                 );
                 list.add(u);
             }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        } catch (Exception e) { System.err.println(e.getMessage()); }
         return list.toArray(new Usuario[0]);
     }
 
@@ -41,15 +37,11 @@ public class UsuarioDAO extends DAO {
             int affected = pst.executeUpdate();
             if (affected > 0) {
                 try (ResultSet keys = pst.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        u.setCodigo(keys.getInt(1)); // opcional: preencher id gerado no objeto
-                    }
+                    if (keys.next()) u.setCodigo(keys.getInt(1));
                 }
                 status = true;
             }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println(e.getMessage()); }
         return status;
     }
 
@@ -63,9 +55,7 @@ public class UsuarioDAO extends DAO {
             pst.setInt(4, u.getCodigo());
             int affected = pst.executeUpdate();
             status = (affected > 0);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println(e.getMessage()); }
         return status;
     }
 
@@ -76,9 +66,7 @@ public class UsuarioDAO extends DAO {
             pst.setInt(1, codigo);
             int affected = pst.executeUpdate();
             status = (affected > 0);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println(e.getMessage()); }
         return status;
     }
 }
