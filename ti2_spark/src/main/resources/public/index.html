@@ -15,7 +15,6 @@
 <body>
   <h1>CRUD Usuários</h1>
 
-  <!-- Listagem -->
   <h2>Usuários cadastrados</h2>
   <button onclick="listarUsuarios()">Atualizar Lista</button>
   <table id="tabelaUsuarios">
@@ -30,7 +29,6 @@
     <tbody></tbody>
   </table>
 
-  <!-- Inserir -->
   <h2>Adicionar Usuário</h2>
   <form onsubmit="inserirUsuario(event)">
     <input type="text" id="novoLogin" placeholder="Login" required>
@@ -39,7 +37,6 @@
     <button type="submit">Adicionar</button>
   </form>
 
-  <!-- Atualizar -->
   <h2>Atualizar Usuário</h2>
   <form onsubmit="atualizarUsuario(event)">
     <input type="number" id="atualizarId" placeholder="Código" required>
@@ -49,7 +46,6 @@
     <button type="submit">Atualizar</button>
   </form>
 
-  <!-- Excluir -->
   <h2>Excluir Usuário</h2>
   <form onsubmit="excluirUsuario(event)">
     <input type="number" id="excluirId" placeholder="Código" required>
@@ -57,8 +53,8 @@
   </form>
 
   <script>
-    const API = "http://localhost:4567/usuarios";
-
+    const API = "/usuarios";
+    
     async function listarUsuarios() {
       const res = await fetch(API);
       const usuarios = await res.json();
@@ -85,7 +81,7 @@
       await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `login=${login}&senha=${senha}&sexo=${sexo}`
+        body: `login=${encodeURIComponent(login)}&senha=${encodeURIComponent(senha)}&sexo=${encodeURIComponent(sexo)}`
       });
       listarUsuarios();
       event.target.reset();
@@ -101,7 +97,7 @@
       await fetch(`${API}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `login=${login}&senha=${senha}&sexo=${sexo}`
+        body: `login=${encodeURIComponent(login)}&senha=${encodeURIComponent(senha)}&sexo=${encodeURIComponent(sexo)}`
       });
       listarUsuarios();
       event.target.reset();
@@ -116,7 +112,6 @@
       event.target.reset();
     }
 
-    // Carregar lista ao abrir
     listarUsuarios();
   </script>
 </body>

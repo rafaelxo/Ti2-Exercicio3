@@ -26,7 +26,7 @@ public class Usuario {
         return login;
     }
     public void setLogin(String login) {
-    	if (login == null || login.length() <= 3) { throw new IllegalArgumentException("O login deve ter mais de 3 caracteres."); }
+        if (login == null || login.length() <= 3) { throw new IllegalArgumentException("O login deve ter mais de 3 caracteres."); }
         this.login = login;
     }
 
@@ -34,7 +34,7 @@ public class Usuario {
         return senha;
     }
     public void setSenha(String senha) {
-    	if (senha == null || senha.length() <= 5) { throw new IllegalArgumentException("A senha deve ter mais de 5 caracteres."); }
+        if (senha == null || senha.length() <= 5) { throw new IllegalArgumentException("A senha deve ter mais de 5 caracteres."); }
         this.senha = senha;
     }
 

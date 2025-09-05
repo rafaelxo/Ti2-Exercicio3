@@ -24,7 +24,11 @@ public class DAO {
             Class.forName(driverName);
             conexao = DriverManager.getConnection(url, username, password);
             status = (conexao != null);
-            System.out.println("Conexão efetuada com o postgres!");
+            if (status) {
+                System.out.println("Conexão efetuada com o postgres!");
+            } else {
+                System.err.println("Conexão retornou nula.");
+            }
         } catch (ClassNotFoundException e) {
             System.err.println("Driver não encontrado: " + e.getMessage());
         } catch (SQLException e) {
@@ -36,7 +40,9 @@ public class DAO {
     public boolean close() {
         boolean status = false;
         try {
-            conexao.close();
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
             status = true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());

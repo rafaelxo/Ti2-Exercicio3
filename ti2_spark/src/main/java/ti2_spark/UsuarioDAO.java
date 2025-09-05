@@ -1,6 +1,8 @@
 package ti2_spark;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDAO extends DAO {
 
@@ -9,40 +11,42 @@ public class UsuarioDAO extends DAO {
     }
 
     public Usuario[] listarUsuarios() {
-        Usuario[] usuarios = null;
-        try {
-            Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT * FROM usuario");
-            if (rs.next()) {
-                rs.last();
-                usuarios = new Usuario[rs.getRow()];
-                rs.beforeFirst();
-
-                int i = 0;
-                while (rs.next()) {
-                    usuarios[i++] = new Usuario(
-                        rs.getInt("codigo"),
-                        rs.getString("login"),
-                        rs.getString("senha"),
-                        rs.getString("sexo").charAt(0)
-                    );
-                }
+        List<Usuario> list = new ArrayList<>();
+        String sql = "SELECT codigo, login, senha, sexo FROM usuario ORDER BY codigo";
+        try (PreparedStatement pst = conexao.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                Usuario u = new Usuario(
+                    rs.getInt("codigo"),
+                    rs.getString("login"),
+                    rs.getString("senha"),
+                    rs.getString("sexo") != null && rs.getString("sexo").length() > 0 ? rs.getString("sexo").charAt(0) : '\0'
+                );
+                list.add(u);
             }
-            st.close();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-        return usuarios;
+        return list.toArray(new Usuario[0]);
     }
 
+    // Insere sem enviar explicitamente o codigo (assumindo SERIAL). Retorna true se inseriu.
     public boolean inserirUsuario(Usuario u) {
         boolean status = false;
-        try {
-            Statement st = conexao.createStatement();
-            st.executeUpdate("INSERT INTO usuario (codigo, login, senha, sexo) "
-                    + "VALUES (" + u.getCodigo() + ", '" + u.getLogin() + "', '" + u.getSenha() + "', '" + u.getSexo() + "');");
-            st.close();
-            status = true;
+        String sql = "INSERT INTO usuario (login, senha, sexo) VALUES (?, ?, ?)";
+        try (PreparedStatement pst = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pst.setString(1, u.getLogin());
+            pst.setString(2, u.getSenha());
+            pst.setString(3, String.valueOf(u.getSexo()));
+            int affected = pst.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet keys = pst.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        u.setCodigo(keys.getInt(1)); // opcional: preencher id gerado no objeto
+                    }
+                }
+                status = true;
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
@@ -51,12 +55,14 @@ public class UsuarioDAO extends DAO {
 
     public boolean atualizarUsuario(Usuario u) {
         boolean status = false;
-        try {
-            Statement st = conexao.createStatement();
-            st.executeUpdate("UPDATE usuario SET login = '" + u.getLogin() + "', senha = '" + u.getSenha() +
-                    "', sexo = '" + u.getSexo() + "' WHERE codigo = " + u.getCodigo() + ";");
-            st.close();
-            status = true;
+        String sql = "UPDATE usuario SET login = ?, senha = ?, sexo = ? WHERE codigo = ?";
+        try (PreparedStatement pst = conexao.prepareStatement(sql)) {
+            pst.setString(1, u.getLogin());
+            pst.setString(2, u.getSenha());
+            pst.setString(3, String.valueOf(u.getSexo()));
+            pst.setInt(4, u.getCodigo());
+            int affected = pst.executeUpdate();
+            status = (affected > 0);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
@@ -65,11 +71,11 @@ public class UsuarioDAO extends DAO {
 
     public boolean excluirUsuario(int codigo) {
         boolean status = false;
-        try {
-            Statement st = conexao.createStatement();
-            st.executeUpdate("DELETE FROM usuario WHERE codigo = " + codigo + ";");
-            st.close();
-            status = true;
+        String sql = "DELETE FROM usuario WHERE codigo = ?";
+        try (PreparedStatement pst = conexao.prepareStatement(sql)) {
+            pst.setInt(1, codigo);
+            int affected = pst.executeUpdate();
+            status = (affected > 0);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
