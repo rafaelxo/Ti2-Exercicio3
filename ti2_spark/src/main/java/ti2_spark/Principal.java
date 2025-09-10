@@ -13,14 +13,12 @@ public class Principal {
         port(6789);
         staticFiles.location("/public");
 
-        // Conexão com banco
         if (!usuarioDAO.conectar()) {
             System.out.println("Falha ao conectar no banco!");
             stop();
             return;
         }
 
-        // Helper para extrair params de POST/PUT
         final java.util.function.BiFunction<Request,String,String> param = (req, name) -> {
             String v = req.queryParams(name);
             if (v != null) return v;
@@ -45,11 +43,18 @@ public class Principal {
                 for (int i = 0; i < usuarios.length; i++) {
                     Usuario u = usuarios[i];
                     json.append("{")
-                        .append("\"codigo\":").append(u.getCodigo()).append(",")
+                        .append("\"id\":").append(u.getId()).append(",")
                         .append("\"login\":\"").append(escapeJson(u.getLogin())).append("\",")
                         .append("\"senha\":\"").append(escapeJson(u.getSenha())).append("\",")
-                        .append("\"sexo\":\"").append(u.getSexo()).append("\"")
-                        .append("}");
+                        .append("\"nome\":\"").append(escapeJson(u.getNome())).append("\",")
+                        .append("\"email\":\"").append(escapeJson(u.getEmail())).append("\"");
+
+                    if (u.getInfos() != null) {
+                        json.append(",\"atividades\":").append(u.getInfos().getAtividades().size())
+                            .append(",\"feedbacks\":").append(u.getInfos().getFeedbacks().size());
+                    }
+
+                    json.append("}");
                     if (i < usuarios.length - 1) json.append(",");
                 }
             }
@@ -61,23 +66,22 @@ public class Principal {
         // Inserir usuário
         post("/usuarios", (req, res) -> {
             res.type("application/json; charset=UTF-8");
-            String login = param.apply(req, "login");
-            String senha = param.apply(req, "senha");
-            String sexoStr = param.apply(req, "sexo");
-            if (login == null || senha == null || sexoStr == null || sexoStr.length() == 0) {
-                res.status(400);
-                return "{\"success\":false, \"error\":\"Parâmetros inválidos\"}";
-            }
-            char sexo = sexoStr.charAt(0);
+
             Usuario novo = new Usuario();
-            try {
-                novo.setLogin(login);
-                novo.setSenha(DAO.getMD5(senha));
-                novo.setSexo(sexo);
-            } catch (IllegalArgumentException ex) {
-                res.status(400);
-                return "{\"success\":false, \"error\":\"" + escapeJson(ex.getMessage()) + "\"}";
-            }
+            novo.setLogin(param.apply(req, "login"));
+            novo.setSenha(DAO.getMD5(param.apply(req, "senha")));
+            novo.setNome(param.apply(req, "nome"));
+            novo.setEmail(param.apply(req, "email"));
+            novo.setFoto(param.apply(req, "foto"));
+            novo.setTelefone(param.apply(req, "telefone"));
+            novo.setDataNasc(param.apply(req, "dataNasc"));
+            novo.setLocalizacao(param.apply(req, "localizacao"));
+            novo.setProfissao(param.apply(req, "profissao"));
+            novo.setFormacao(param.apply(req, "formacao"));
+            novo.setEmpresa(param.apply(req, "empresa"));
+            novo.setHabilidades(param.apply(req, "habilidades"));
+            novo.setIdioma(param.apply(req, "idioma"));
+
             boolean ok = usuarioDAO.inserirUsuario(novo);
             res.status(ok ? 201 : 500);
             return "{\"success\":" + ok + "}";
@@ -87,15 +91,23 @@ public class Principal {
         put("/usuarios/:id", (req, res) -> {
             res.type("application/json; charset=UTF-8");
             int id = Integer.parseInt(req.params(":id"));
-            String login = param.apply(req, "login");
-            String senha = param.apply(req, "senha");
-            String sexoStr = param.apply(req, "sexo");
-            if (login == null || senha == null || sexoStr == null || sexoStr.length() == 0) {
-                res.status(400);
-                return "{\"success\":false, \"error\":\"Parâmetros inválidos\"}";
-            }
-            char sexo = sexoStr.charAt(0);
-            Usuario u = new Usuario(id, login, DAO.getMD5(senha), sexo);
+
+            Usuario u = new Usuario();
+            u.setId(id);
+            u.setLogin(param.apply(req, "login"));
+            u.setSenha(DAO.getMD5(param.apply(req, "senha")));
+            u.setNome(param.apply(req, "nome"));
+            u.setEmail(param.apply(req, "email"));
+            u.setFoto(param.apply(req, "foto"));
+            u.setTelefone(param.apply(req, "telefone"));
+            u.setDataNasc(param.apply(req, "dataNasc"));
+            u.setLocalizacao(param.apply(req, "localizacao"));
+            u.setProfissao(param.apply(req, "profissao"));
+            u.setFormacao(param.apply(req, "formacao"));
+            u.setEmpresa(param.apply(req, "empresa"));
+            u.setHabilidades(param.apply(req, "habilidades"));
+            u.setIdioma(param.apply(req, "idioma"));
+
             boolean ok = usuarioDAO.atualizarUsuario(u);
             res.status(ok ? 200 : 404);
             return "{\"success\":" + ok + "}";

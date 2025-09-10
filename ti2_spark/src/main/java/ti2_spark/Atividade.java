@@ -12,14 +12,15 @@ public class Atividade {
     private LocalDateTime dataHora;
 
     public Atividade() {}
+
     public Atividade(String nomeAtividade, String classe, int horasGastas, int metaHoras, boolean metaCumprida, String prioridade, LocalDateTime dataHora) {
-        this.nomeAtividade = nomeAtividade;
-        this.classe = classe;
-        this.horasGastas = horasGastas;
-        this.metaHoras = metaHoras;
-        this.metaCumprida = metaCumprida;
-        this.prioridade = prioridade;
-        this.dataHora = dataHora;
+        setNomeAtividade(nomeAtividade);
+        setClasse(classe);
+        setHorasGastas(horasGastas);
+        setMetaHoras(metaHoras);
+        setMetaCumprida(metaCumprida);
+        setPrioridade(prioridade);
+        setDataHora(dataHora);
     }
 
     public String getNomeAtividade() { return nomeAtividade; }

@@ -13,15 +13,16 @@ public class Feedback {
     private String metas;
 
     public Feedback() {}
+
     public Feedback(LocalDate dataInicio, String adversidades, String dificuldades, String beneficios, int duracao, int satisfacao, String observacoesFeedback, String metas) {
-        this.dataInicio = dataInicio;
-        this.adversidades = adversidades;
-        this.dificuldades = dificuldades;
-        this.beneficios = beneficios;
-        this.duracao = duracao;
-        this.satisfacao = satisfacao;
-        this.observacoesFeedback = observacoesFeedback;
-        this.metas = metas;
+        setDataInicio(dataInicio);
+        setAdversidades(adversidades);
+        setDificuldades(dificuldades);
+        setBeneficios(beneficios);
+        setDuracao(duracao);
+        setSatisfacao(satisfacao);
+        setObservacoesFeedback(observacoesFeedback);
+        setMetas(metas);
     }
 
     public LocalDate getDataInicio() { return dataInicio; }

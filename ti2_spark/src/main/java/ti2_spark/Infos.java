@@ -4,17 +4,18 @@ import java.util.List;
 
 public class Infos {
     private List<Atividade> atividades;
-    private List<Feedback> feedback;
+    private List<Feedback> feedbacks;
 
     public Infos() {}
-    public Infos(List<Atividade> atividades, List<Feedback> feedback) {
-        this.atividades = atividades;
-        this.feedback = feedback;
+
+    public Infos(List<Atividade> atividades, List<Feedback> feedbacks) {
+        setAtividades(atividades);
+        setFeedbacks(feedbacks);
     }
 
     public List<Atividade> getAtividades() { return atividades; }
     public void setAtividades(List<Atividade> atividades) { this.atividades = atividades; }
 
-    public List<Feedback> getFeedback() { return feedback; }
-    public void setFeedback(List<Feedback> feedback) { this.feedback = feedback; }
+    public List<Feedback> getFeedbacks() { return feedbacks; }
+    public void setFeedbacks(List<Feedback> feedbacks) { this.feedbacks = feedbacks; }
 }
