@@ -1,9 +1,7 @@
 package ti2_spark;
 
-import java.time.LocalDate;
-
 public class Feedback {
-    private LocalDate dataInicio;
+    private String dataInicio;
     private String adversidades;
     private String dificuldades;
     private String beneficios;
@@ -14,7 +12,7 @@ public class Feedback {
 
     public Feedback() {}
 
-    public Feedback(LocalDate dataInicio, String adversidades, String dificuldades, String beneficios, int duracao, int satisfacao, String observacoesFeedback, String metas) {
+    public Feedback(String dataInicio, String adversidades, String dificuldades, String beneficios, int duracao, int satisfacao, String observacoesFeedback, String metas) {
         setDataInicio(dataInicio);
         setAdversidades(adversidades);
         setDificuldades(dificuldades);
@@ -25,8 +23,8 @@ public class Feedback {
         setMetas(metas);
     }
 
-    public LocalDate getDataInicio() { return dataInicio; }
-    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
+    public String getDataInicio() { return dataInicio; }
+    public void setDataInicio(String dataInicio) { this.dataInicio = dataInicio; }
 
     public String getAdversidades() { return adversidades; }
     public void setAdversidades(String adversidades) { this.adversidades = adversidades; }
