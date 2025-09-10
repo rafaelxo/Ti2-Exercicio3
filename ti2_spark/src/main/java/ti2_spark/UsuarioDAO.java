@@ -151,7 +151,7 @@ public class UsuarioDAO extends DAO {
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
                     Feedback f = new Feedback();
-                    f.setDataInicio(rs.getDate("dataInicio").toLocalDate());
+                    f.setDataInicio(rs.getString("dataInicio"));
                     f.setAdversidades(rs.getString("adversidades"));
                     f.setDificuldades(rs.getString("dificuldades"));
                     f.setBeneficios(rs.getString("beneficios"));
