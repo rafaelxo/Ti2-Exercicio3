@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>CRUD Usuários</title>
+  <title>Ti2 - Spark</title>
   <link rel="stylesheet" href="index.css">
   <script src="index.js"></script>
 </head>
@@ -15,10 +15,11 @@
   <table id="tabelaUsuarios">
     <thead>
       <tr>
-        <th>Código</th>
+        <th>ID</th>
+        <th>Nome</th>
         <th>Login</th>
         <th>Senha (MD5)</th>
-        <th>Sexo</th>
+        <th>E-mail</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -27,9 +28,10 @@
   <!--  Create  -->
   <h2>Adicionar Usuário</h2>
   <form onsubmit="inserirUsuario(event)">
+  	<input type="text" id="novoNome" placeholder="Nome" required>
     <input type="text" id="novoLogin" placeholder="Login" required>
     <input type="password" id="novaSenha" placeholder="Senha" required>
-    <input type="text" id="novoSexo" placeholder="Sexo (M/F)" maxlength="1" required>
+    <input type="text" id="novoEmail" placeholder="E-mail" required>
     <button type="submit">Adicionar</button>
   </form>
 
@@ -37,9 +39,10 @@
   <h2>Atualizar Usuário</h2>
   <form onsubmit="atualizarUsuario(event)">
     <input type="number" id="atualizarId" placeholder="Código" required>
+    <input type="text" id="atualizarNome" placeholder="Novo Nome" required>
     <input type="text" id="atualizarLogin" placeholder="Novo Login" required>
     <input type="password" id="atualizarSenha" placeholder="Nova Senha" required>
-    <input type="text" id="atualizarSexo" placeholder="Novo Sexo (M/F)" maxlength="1" required>
+    <input type="text" id="atualizarEmail" placeholder="Novo E-mail" required>
     <button type="submit">Atualizar</button>
   </form>
 
